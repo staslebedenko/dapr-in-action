@@ -1,9 +1,7 @@
 using Dapr.Client;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -52,9 +50,7 @@ namespace TPaperOrders
             EdiOrder savedOrder = (await _context.EdiOrder.AddAsync(order, cts)).Entity;
             await _context.SaveChangesAsync(cts);
 
-            // DeliveryModel savedDelivery = await CreateDeliveryForOrder(savedOrder, cts);
-
-            DeliveryModel savedDelivery = await _daprClient.InvokeMethodAsync<DeliveryModel>(HttpMethod.Get, "delivery", "create");
+            DeliveryModel savedDelivery = await CreateDeliveryForOrder(savedOrder, cts);
 
             string responseMessage = $"Accepted EDI message {order.Id} and created delivery {savedDelivery?.Id}";
 
@@ -63,21 +59,13 @@ namespace TPaperOrders
 
         private async Task<DeliveryModel> CreateDeliveryForOrder(EdiOrder savedOrder, CancellationToken cts)
         {
-            string url =
-                $"http://localhost:35773/api/delivery/create/{savedOrder.ClientId}/{savedOrder.Id}/{savedOrder.ProductCode}/{savedOrder.Quantity}";
 
-            using var httpClient = _clientFactory.CreateClient();
-            var uriBuilder = new UriBuilder(url);
+            var route = $"api/delivery/create/{savedOrder.ClientId}/{savedOrder.Id}/{savedOrder.ProductCode}/{savedOrder.Quantity}";
 
-            using var result = await httpClient.GetAsync(uriBuilder.Uri);
-            if (!result.IsSuccessStatusCode)
-            {
-                return null;
-            }
+            DeliveryModel savedDelivery = await _daprClient.InvokeMethodAsync<DeliveryModel>(
+                HttpMethod.Get, "tpaperdelivery", route, cts);
 
-            var content = await result.Content.ReadAsStringAsync();
-
-            return JsonConvert.DeserializeObject<DeliveryModel>(content);
+            return savedDelivery;
         }
     }
 }
