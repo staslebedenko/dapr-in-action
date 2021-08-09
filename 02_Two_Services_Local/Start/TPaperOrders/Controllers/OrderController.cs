@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -18,7 +19,10 @@ namespace TPaperOrders
 
         private readonly IHttpClientFactory _clientFactory;
 
-        public OrderController(PaperDbContext context, ILogger<OrderController> logger, IHttpClientFactory clientFactory)
+        public OrderController(
+            PaperDbContext context,
+            ILogger<OrderController> logger,
+            IHttpClientFactory clientFactory)
         {
             _context = context;
             _logger = logger;
