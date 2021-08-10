@@ -11,10 +11,10 @@ COPY ["TPaperOrders/TPaperOrders.csproj", "TPaperOrders/"]
 RUN dotnet restore "TPaperOrders/TPaperOrders.csproj"
 COPY . .
 WORKDIR "/src/TPaperOrders"
-RUN dotnet build "TPaperOrders.csproj" -e sqlDeliveryString -e SqlPaperPassword -c Release -o /app/build
+RUN dotnet build "TPaperOrders.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "TPaperOrders.csproj" -e sqlDeliveryString -e SqlPaperPassword -c Release -o /app/publish
+RUN dotnet publish "TPaperOrders.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app

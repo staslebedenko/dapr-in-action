@@ -1,6 +1,7 @@
 version: '3.4'
 
 services:
+
   tpaperorders:
     image: ${DOCKER_REGISTRY-}tpaperorders
     build:
@@ -8,6 +9,8 @@ services:
       dockerfile: TPaperOrders/Dockerfile
     ports:
       - "51000:50001"
+    env_file:
+      - settings.env
 
   tpaperorders-dapr:
     image: "daprio/daprd:latest"
@@ -23,6 +26,8 @@ services:
       dockerfile: TPaperDelivery/Dockerfile
     ports:
       - "52000:50001"
+    env_file:
+      - settings.env
 
   tpaperdelivery-dapr:
     image: "daprio/daprd:latest"
