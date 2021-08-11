@@ -1,12 +1,3 @@
-data:
-  SqlDeliveryString: secret
-  SqlPaperPassword: secret==
-  SqlPaperString: secret==
-apiVersion: v1
-kind: Secret
-metadata:
-  name: tpaperorders
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -31,7 +22,7 @@ spec:
     spec:
       containers:
         - name: tpaperorders
-          image: netfwdaysregistry.azurecr.io/tpaperorders:v1
+          image: netfwdaysregistry.azurecr.io/tpaperorders:v2
           imagePullPolicy: Always
           ports:
             - containerPort: 80
@@ -39,6 +30,10 @@ spec:
           env:
             - name: ASPNETCORE_URLS
               value: http://+:80
+            - name: SqlPaperString
+              value: Server=tcp:fwdays.database.windows.net,1433;Initial Catalog=paperorders;Persist Security Info=False;User ID=FancyUser3;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;
+            - name: SqlPaperPassword
+              value: secret:)
 ---
 apiVersion: v1
 kind: Service
