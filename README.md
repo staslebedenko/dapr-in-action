@@ -141,6 +141,8 @@ Start folder contains solution with two projects.
 
 End folder contains solution with DAPR, service invocation via HTTP and docker compose files with sidecar. 
 
+Lets start with right clicking on each solution and adding orchestration with Container orchestration via Docker compose. Visual studio will generate docker compose files for you. 
+
 ## Step 3. Application deployment to Azure Kubernetes service.
 We will create AKS manifests for our services and add DAPR sections.
 Deploy dapr to AKS cluster and add containers to the private repository.
@@ -149,9 +151,127 @@ Start folder contains solution with local env variables added to docker compose.
 
 End folder contains solution with Kubernetes manifests ready for deployment, secrets included right into manifests to simplify flow.
 
+You will need an Azure subscription ID.
+
+Lets start with CMD.
+```cmd
+az login
+az account set --subscription 95cd9078f8c
+az account show
+az acr login --name netfwdaysregistry
+az aks get-credentials --resource-group netfwdays-cluster --name netfwdays-cluster --overwrite-existing
+kubectl config use-context netfwdays-cluster
+kubectl get all
+```
+
+And initialize DAPR.
+```cmd
+dapr init -k 
+```
+
+and validate it with 
+```cmd
+dapr status -k 
+```
+Then we will need to build our solution in release mode and observe results with command. You can start docker desktop application for GUI container handling.
+
+```cmd
+docker images
+```
+Lets tag our newly built container with azure container registry name and version.
+```cmd
+docker tag tpaperorders:latest netfwdaysregistry.azurecr.io/tpaperorders:v3
+docker tag tpaperdelivery:latest netfwdaysregistry.azurecr.io/tpaperdelivery:v1
+```
+
+Check results with
+```cmd
+docker images
+```
+
+And push images to container registry
+```cmd
+docker push netfwdaysregistry.azurecr.io/tpaperorders:v1
+docker push netfwdaysregistry.azurecr.io/tpaperdelivery:v1
+```
+
+There is need to change version of container in YAML manifest files inside Step 3 End directory, and change this files each time you preparing a new version of container.
+```yaml
+    spec:
+      containers:
+        - name: tpaperorders
+          image: netfwdaysregistry.azurecr.io/tpaperorders:v1
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+              protocol: TCP          
+```
+
+Now we need to pray the "demo gods" for our deployment and run commands below
+```cmd
+kubectl apply -f tpaperorders-deploy.yaml
+kubectl apply -f tpaperdelivery-deploy.yaml
+```
+
+And then check results with 
+
+```cmd
+kubectl get all
+```
+
+You can use set of commands below for quick container/publish re-deployments.
+Just change version in kubernetes manifest and commands below.
+```cmd
+docker tag tpaperorders:latest netfwdaysregistry.azurecr.io/tpaperorders:v6
+docker images
+docker push netfwdaysregistry.azurecr.io/tpaperorders:v6
+kubectl apply -f tpaperorders-deploy.yaml
+kubectl get all
+
+docker tag tpaperdelivery:latest netfwdaysregistry.azurecr.io/tpaperdelivery:v14
+docker images
+docker push netfwdaysregistry.azurecr.io/tpaperdelivery:v14
+kubectl apply -f tpaperdelivery-deploy.yaml
+kubectl get all
+```
+
+
 ## Step 4. Introduction to the DAPR pubsub.
 We will deploy DAPR pubsub component to Azure. Make changes to our code and take a look into the pod logs to see whats happening.
 
 Start folder contains all needed files for this step.
 
+We need to deploy pubsub component and RabbitMQ broker with
+```cmd
+kubectl apply -f rabbitmq.yaml
+kubectl apply -f pubsub-rabbitmq.yaml
+```
+
+We will need following commands to get logs from AKS cluster.
+You should get correct pod names from get all command and change log command accordingly.
+
+```cmd
+kubectl get all
+
+kubectl logs tpaperdelivery-599b8cd4b7-8nxzz daprd
+kubectl logs tpaperdelivery-599b8cd4b7-8nxzz tpaperdelivery
+```
+
+
+You might need to delete all deployments
+```cmd
+kubectl get deployments
+
+kubectl delete deployments tpaperdelivery
+kubectl delete deployments tpaperorders
+
+kubectl delete svc tpaperorders
+kubectl delete svc tpaperdelivery
+```
+
+If you want to purge containers from Azure container registry
+```cmd
+az acr repository delete --name netfwdaysregistry --repository tpaperdelivery
+az acr repository delete --name netfwdaysregistry --repository tpaperorders
+```
 
