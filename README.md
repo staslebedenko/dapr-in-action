@@ -1,6 +1,21 @@
 # dapr-in-action
 
+## Steps
+The workshop is build around five steps.
 
+0. Deployment of required Azure infrastructure, databases for step one and two, along with AKS for 3 and 4.
+1. Building the monolithic Web API solution and splitting its databases.
+2. Splitting solution into two projects, containeraizing them and adding DAPR runtime.
+3. Create AKS manifest, setting up DAPR in Azure Kubernetes cluster and deploying solution to Cloud.
+4. Adding DAPR pubsub component and RabbitMQ container. Changing solution code to work with a pubsub.
+Analyzing issues and solving them with logging.
+
+
+## Prerequisites
+
+Good mood :).
+
+## Step 0. Azure infrastructure
 
 ```
 subscriptionID=$(az account list --query "[?contains(name,'Microsoft')].[id]" -o tsv)
@@ -94,3 +109,10 @@ printf "\n\nRun string below in local cmd prompt to assign secret to environment
 printf "\n\nRun string below in local cmd prompt to assign secret to environment variable SqlPaperPassword:\nsetx SqlPaperPassword \"$SqlPaperPassword\"\n\n"
 
 ```
+
+## Step 1. Install local components - azure cli, kubectl, helm, etc.
+
+Lets install:
+The idea of this step is to start with monolith split without breaking it into several solutions.
+First we will split Entity Framework context into two parts that can use the same(of different databases)
+
