@@ -16,8 +16,11 @@ Analyzing issues and solving them with logging.
 Good mood :).
 
 ## Step 0. Azure infrastructure
+Script below should be run via Azure Portal bash console. 
+You will receive database connection strings with setx command as output of this script.
+Please add a correct name of your subscription to the first row of the script. 
 
-```
+```bash
 subscriptionID=$(az account list --query "[?contains(name,'Microsoft')].[id]" -o tsv)
 echo "Test subscription ID is = " $subscriptionID
 az account set --subscription $subscriptionID
@@ -110,9 +113,25 @@ printf "\n\nRun string below in local cmd prompt to assign secret to environment
 
 ```
 
-## Step 1. Install local components - azure cli, kubectl, helm, etc.
+2. Splitting solution into two projects, containeraizing them and adding DAPR runtime.
+3. Create AKS manifest, setting up DAPR in Azure Kubernetes cluster and deploying solution to Cloud.
+4. Adding DAPR pubsub component and RabbitMQ container. Changing solution code to work with a pubsub.
 
-Lets install:
+## Step 1. Monolithic Web API initial split.
+
 The idea of this step is to start with monolith split without breaking it into several solutions.
 First we will split Entity Framework context into two parts that can use the same(of different databases)
+
+## Step 1. Monolithic Web API initial split.
+
+## Step 2. Split in two projects, docker compose and DAPR initialization.
+We adding containerization via Visual Studio tooling and manually adding DAPR sidecar configuration for each server.
+
+## Step 3. Application deployment to Azure Kubernetes service.
+We will create AKS manifests for our services and add DAPR sections.
+Deploy dapr to AKS cluster and add containers to the private repository.
+
+## Step 4. Introduction to the DAPR pubsub.
+We will deploy DAPR pubsub component to Azure. Make changes to our code and take a look into the pod logs to see whats happening.
+
 
