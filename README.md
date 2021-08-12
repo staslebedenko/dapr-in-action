@@ -113,16 +113,10 @@ printf "\n\nRun string below in local cmd prompt to assign secret to environment
 
 ```
 
-2. Splitting solution into two projects, containeraizing them and adding DAPR runtime.
-3. Create AKS manifest, setting up DAPR in Azure Kubernetes cluster and deploying solution to Cloud.
-4. Adding DAPR pubsub component and RabbitMQ container. Changing solution code to work with a pubsub.
-
 ## Step 1. Monolithic Web API initial split.
 
 The idea of this step is to start with monolith split without breaking it into several solutions.
 First we will split Entity Framework context into two parts that can use the same(of different databases)
-
-## Step 1. Monolithic Web API initial split.
 
 ## Step 2. Split in two projects, docker compose and DAPR initialization.
 We adding containerization via Visual Studio tooling and manually adding DAPR sidecar configuration for each server.
