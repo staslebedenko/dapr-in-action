@@ -10,10 +10,23 @@ The workshop is build around five steps.
 4. Adding DAPR pubsub component and RabbitMQ container. Changing solution code to work with a pubsub.
 Analyzing issues and solving them with logging.
 
-
 ## Prerequisites
 
 Good mood :).
+
+1. Visual Studio or Visual Studio Code with .NET Framework 3.1.
+2. Docker Desktop to run the containerized application locally.
+https://www.docker.com/products/docker-desktop
+3. DAPR CLI installed on a local machine.
+https://docs.dapr.io/getting-started/install-dapr-cli/docker
+4. Kompose tool for Kubernetes manifest generation (optional).
+https://kompose.io/getting-started/ 
+5. AZ CLI tools installation(for cloud deployment)
+https://aka.ms/installazurecliwindows
+6. Azure subscription, if you want to deploy applications to Kubernetes(AKS).
+https://azure.microsoft.com/en-us/free/
+7. Kubectl installation https://kubernetes.io/docs/tasks/tools/install-kubectl-windows/#install-kubectl-binary-with-curl-on-windows
+8. Good mood :)
 
 ## Step 0. Azure infrastructure
 Script below should be run via Azure Portal bash console. 
@@ -115,17 +128,30 @@ printf "\n\nRun string below in local cmd prompt to assign secret to environment
 
 ## Step 1. Monolithic Web API initial split.
 
-The idea of this step is to start with monolith split without breaking it into several solutions.
-First we will split Entity Framework context into two parts that can use the same(of different databases)
+We will split Entity Framework context into two parts that can use the same(or different databases).
+
+Start folder contains monolith solution.
+
+End folder contains monolith with EF context split in two.
 
 ## Step 2. Split in two projects, docker compose and DAPR initialization.
 We adding containerization via Visual Studio tooling and manually adding DAPR sidecar configuration for each server.
+
+Start folder contains solution with two projects.
+
+End folder contains solution with DAPR, service invocation via HTTP and docker compose files with sidecar. 
 
 ## Step 3. Application deployment to Azure Kubernetes service.
 We will create AKS manifests for our services and add DAPR sections.
 Deploy dapr to AKS cluster and add containers to the private repository.
 
+Start folder contains solution with local env variables added to docker compose. At this point we will enable database communication with our AKS cluster and setup connection from local machine to private container registry and kubernetes cluster.
+
+End folder contains solution with Kubernetes manifests ready for deployment, secrets included right into manifests to simplify flow.
+
 ## Step 4. Introduction to the DAPR pubsub.
 We will deploy DAPR pubsub component to Azure. Make changes to our code and take a look into the pod logs to see whats happening.
+
+Start folder contains all needed files for this step.
 
 
